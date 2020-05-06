@@ -1,0 +1,27 @@
+- name: "Install remi repo for the latest redis env.version (5.x +)"
+  yum:
+    name: "http://rpms.remirepo.net/enterprise/remi-release-7.rpm"
+    state: "present"
+  become: "true"
+
+- name: "Install redis"
+  become: "true"
+  package:
+    name:
+      - "redis"
+    enablerepo: "remi"
+    state: "present"
+
+- name: "Copy redis.conf"
+  become: "true"
+  template:
+    src: "redis.conf.j2"
+    dest: "/etc/redis.conf"
+    force: "yes"
+
+- name: "Enable & start redis"
+  become: "true"
+  systemd:
+    name: "redis"
+    enabled: "yes"
+    state: "started"
